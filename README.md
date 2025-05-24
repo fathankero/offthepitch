@@ -1,2 +1,897 @@
-# offthepitch
-Football news website
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <!-- Mengatur encoding karakter untuk dokumen -->
+  <meta charset="UTF-8" />
+  <!-- Mengatur tampilan viewport untuk layout pada berbagai perangkat -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Judul dari halaman web -->
+  <title>Off The Pitch</title>
+  <!-- Tautan ke Google Fonts untuk mengimpor berat Montserrat 400 dan 700 -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Tautan ke Font Awesome untuk ikon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- Bundle JavaScript Bootstrap dari CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <!-- CSS Bootstrap dari CDN dengan versi dan integritas tertentu -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+  <style>
+     /* Mengatur gaya untuk elemen body */
+     body {
+      margin: 0;
+      font-family: "Montserrat", sans-serif;
+      color: white;
+    }
+
+    /* Mengatur gaya untuk elemen header */
+    header {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Mengatur gaya untuk kontainer video */
+    .video-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Mengatur gaya untuk video di dalam kontainer video */
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Mengatur gaya untuk overlay teks di atas video */
+    .text-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #fff;
+      z-index: 1;
+     
+      white-space: nowrap;
+    }
+
+    /* Mengatur gaya untuk judul h1 di dalam overlay teks */
+    .text-overlay h1 {
+      margin: 0;
+      font-weight: 700;
+       font-size: 184px;
+    }
+
+    /* Mengatur gaya untuk toggle menu */
+    .menu-toggle {
+      position: absolute;
+      color: #fff;
+      font-size: 35px;
+      margin: 25px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* Mengatur gaya untuk garis pada toggle menu */
+    .line {
+      width: 30px;
+      height: 3px;
+      background-color: #fff;
+      margin: 5px 0;
+      transition: all 0.3s ease;
+    }
+
+    /* Mengatur gaya untuk sidebar */
+    .side-bar {
+      background: #1b1a1b;
+      backdrop-filter: blur(15px);
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      overflow-y: auto;
+      transition: 0.6s ease;
+      transition-property: left;
+      color: #fff;
+      padding-top: 60px;
+      z-index: 1;
+    }
+
+    /* Mengatur scrollbar pada sidebar untuk browser WebKit */
+    .side-bar::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    /* Mengatur sidebar ketika dalam kondisi aktif */
+    .side-bar.active {
+      left: 0;
+    }
+
+    /* Mengatur tombol close pada sidebar */
+    .close-btn {
+      position: absolute;
+      color: #fff;
+      font-size: 23px;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+
+    /* Efek hover pada tombol close */
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    /* Mengatur tata letak menu dalam sidebar */
+    .menu ul {
+      list-style-type: none;
+      padding: 0;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    /* Mengatur tata letak setiap item menu */
+    .menu ul li {
+      margin-bottom: 10px;
+    }
+
+    /* Mengatur gaya link dalam item menu */
+    .menu ul li a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+    }
+
+    /* Efek hover pada link dalam item menu */
+    .menu ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Mengatur tata letak navbar */
+    .navbar {
+      width: 100%; 
+      padding: 15px 0; 
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      backdrop-filter: blur(15px); 
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Mengatur tata letak setiap item navbar */
+    .navbar ul li {
+      list-style: none;
+      display: inline-block;
+      margin: 0 20px;
+      position: relative;
+    }
+
+    /* Mengatur gaya link dalam item navbar */
+    .navbar ul li a {
+      text-decoration: none;
+      color: #fffbfb;
+      text-transform: uppercase;
+      font-weight: bold; 
+    }
+
+    /* Efek garis bawah pada item navbar saat hover */
+    .navbar ul li::after {
+      content: "";
+      height: 3px;
+      width: 0;
+      background: #009688;
+      position: absolute;
+      left: 0;
+      bottom: -10px;
+      transition: 0.5s;
+    }
+
+ /* Efek pada garis bawah saat hover pada setiap item navbar */
+ .navbar ul li:hover::after {
+      width: 100%;
+    }
+
+    /* Mengatur tinggi carousel sesuai dengan tinggi viewport */
+    .carousel {
+      height: 100vh;
+    }
+
+    /* Mengatur tinggi maksimum gambar carousel sesuai dengan tinggi carousel */
+    .carousel-item img {
+      max-height: 100vh;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    /* Mengatur gaya untuk caption pada carousel */
+    .carousel-caption {
+      backdrop-filter: blur(5px);
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    /* Mengatur gaya untuk link berita */
+    .link-news {
+      font-size: 28px;
+      transition: all 0.3s ease;
+    }
+
+    /* Efek hover pada link berita */
+    .link-news:hover {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    /* Mengatur tampilan utama bagian 'Tentang Kami' */
+    .main-about {
+      background-image: url("sportkk.jpg");
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* Mengatur konten utama */
+    .main-content {
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+    }
+
+    /* Gaya untuk tombol 'Tentang Kami' */
+    #aboutUsBtn {
+      border: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Efek hover pada tombol 'Tentang Kami' */
+    #aboutUsBtn:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Mengatur tampilan utama bagian 'Pengembang' */
+    .main-developer {
+      background-image: url("sportkk.jpg");
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Gaya untuk konten utama bagian 'Pengembang' */
+    .dev-main {
+      padding: 20px;
+    }
+
+    /* Mengatur tampilan kartu-kartu profil */
+    .profile-cards {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Gaya untuk setiap kartu profil */
+    .profile-card {
+      flex: 1;
+      max-width: 300px;
+      margin: 0 10px;
+      font-family: "Open Sans", Arial, sans-serif;
+      position: relative;
+      float: left;
+      overflow: hidden;
+      width: 300px;
+      height: 400px;
+      text-align: center;
+      border: none;
+    }
+   /* Blok latar belakang untuk kartu profil */
+    .profile-card .background-block {
+      float: left;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    /* Gaya latar belakang pada kartu profil */
+    .profile-card .background-block .background {
+      width: 100%;
+      vertical-align: top;
+      opacity: 0.9;
+      -webkit-filter: blur(0.5px);
+      filter: blur(0.5px);
+      -webkit-transform: scale(1.8);
+      transform: scale(2.8);
+    }
+
+    /* Konten kartu profil */
+    .profile-card .card-content {
+      width: 100%;
+      padding: 15px 25px;
+      color: #232323;
+      float: left;
+      background: #efefef;
+      height: 50%;
+      border-radius: 0 0 5px 5px;
+      position: relative;
+      z-index: 9999;
+    }
+
+    /* Latar belakang efek pada konten kartu profil */
+    .profile-card .card-content::before {
+      content: "";
+      background: #efefef;
+      width: 120%;
+      height: 100%;
+      left: 11px;
+      bottom: 51px;
+      position: absolute;
+      z-index: -1;
+      transform: rotate(-13deg);
+    }
+
+    /* Gaya untuk profil pada kartu */
+    .profile-card .profile {
+      border-radius: 50%;
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      max-width: 100px;
+      opacity: 1;
+      box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 255, 255, 1);
+      -webkit-transform: translate(-50%, 0%);
+      transform: translate(-50%, 0%);
+      z-index: 99999;
+    }
+
+    /* Gaya untuk judul pada kartu profil */
+    .profile-card h2 {
+      margin: 0 0 5px;
+      font-weight: 600;
+      font-size: 25px;
+    }
+
+    /* Gaya untuk teks kecil pada kartu profil */
+    .profile-card h2 small {
+      display: block;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+
+    /* Gaya untuk ikon pada kartu profil */
+    .profile-card i {
+      display: inline-block;
+      font-size: 16px;
+      color: #232323;
+      text-align: center;
+      border: 1px solid #232323;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 50%;
+      margin: 0 5px;
+    }
+
+    /* Gaya untuk setiap kartu profil */
+    .profile-card {
+      float: left;
+      width: 100%;
+      margin-top: 15px;
+    }
+    .profile-card{
+      text-decoration: none;
+    }
+    .profile-card i:hover {
+      background-color: #232323;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .icon-block a img {
+  width: 40px; /* Lebar ikon */
+  height: 40px; /* Tinggi ikon */
+  padding: 5px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+/* Efek saat gambar pada elemen a di dalam .icon-block dihover */
+.icon-block a:hover img {
+      border-color: #000;
+      transform: scale(1.1);
+    }
+
+    
+
+    /* Gaya untuk elemen progres */
+    #progress {
+      position: fixed;
+      bottom: 20px;
+      right: 10px;
+      height: 70px;
+      width: 70px;
+      display: none;
+      place-items: center;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    /* Gaya untuk nilai progres */
+    #progress-value {
+      display: block;
+      height: calc(100% - 15px);
+      width: calc(100% - 15px);
+      background-color: #ffffff;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 35px;
+      color: #001a2e;
+    }
+
+    /* Gaya untuk logo navigasi */
+    .logo-nav {
+      position: absolute;
+      z-index: 1;
+      left: 500px;
+      top: -10px;
+    }
+  </style>
+  <body>
+   <!-- Elemen progres -->
+  <div id="progress">
+    <span id="progress-value">&#x1F815;</span>
+  </div>
+
+  <!-- Elemen header -->
+  <header>
+    <!-- Kontainer video -->
+    <div class="video-container">
+      <!-- Video -->
+      <video autoplay loop muted>
+        <source src="sportvid.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <!-- Overlay teks -->
+    <div class="text-overlay">
+      <h1>Off The Pitch</h1>
+    </div>
+
+    <!-- Toggle menu -->
+    <div class="menu-toggle">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Logo navigasi -->
+    <div class="logo-nav">
+      <img src="logo.png" width="100" alt="">
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar">
+      <ul>
+        <!-- Tautan menu -->
+        <li><a href="#">Home</a></li>
+        <li><a href="#carouselExampleCaptions">News</a></li>
+        <li><a href="#aboutDeveloper">Contact</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="side-bar">
+      <!-- Tombol close sidebar -->
+      <div class="close-sidebar-btn close-btn">
+        <i class="fas fa-times"></i>
+      </div>
+      <!-- Menu sidebar -->
+      <div class="menu">
+        <ul>
+          <!-- Tautan menu sidebar -->
+          <li><a href="#">Home</a></li>
+          <li><a href="#carouselExampleCaptions">News</a></li>
+          <li><a href="#about">About Website</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+    <script>
+      // Mendefinisikan fungsi untuk menghitung nilai scroll dan menampilkan progress bar
+      let calcScrollValue = () => {
+      // Mendapatkan elemen progress bar dan nilai progres
+      let scrollProgress = document.getElementById("progress");
+      let progressValue = document.getElementById("progress-value");
+
+      // Menghitung posisi scroll dari atas halaman
+      let pos = document.documentElement.scrollTop;
+
+      // Menghitung tinggi total dokumen termasuk area yang tidak terlihat (overflow)
+      let calcHeight =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+
+      // Menghitung nilai progres scroll dalam persentase
+      let scrollValue = Math.round((pos * 100) / calcHeight);
+
+      // Menampilkan atau menyembunyikan progress bar berdasarkan posisi scroll
+      if (pos > 100) {
+          scrollProgress.style.display = "grid";
+      } else {
+          scrollProgress.style.display = "none";
+      }
+
+      // Menambahkan event listener saat progress bar diklik untuk kembali ke atas halaman
+      scrollProgress.addEventListener("click", () => {
+          document.documentElement.scrollTop = 0;
+      });
+
+      // Mengatur tampilan gradasi pada progress bar berdasarkan nilai progres scroll
+      scrollProgress.style.background = `conic-gradient(#03cc65 ${scrollValue}%, #d7d7d7 ${scrollValue}%)`;
+      };
+
+      // Memanggil fungsi calcScrollValue saat terjadi event menggulir halaman (scroll)
+      window.onscroll = calcScrollValue;
+      // Memanggil fungsi calcScrollValue saat halaman dimuat
+      window.onload = calcScrollValue;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="4" aria-label="Slide 5"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="5" aria-label="Slide 6"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="6" aria-label="Slide 7"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="7" aria-label="Slide 8"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptSions" data-bs-slide-to="8" aria-label="Slide 9"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="9" aria-label="Slide 10"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="news1.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong>Ipswich Town Promosi ke EPL,Bisakah Elkan Baggott Main di
+              Premier League?</strong> </h2>
+            <h3> Ipswich Town Promosi ke EPL, Bisakah Elkan Baggott Main di
+              Premier League?</h3>
+              <a href="https://startingeleven.id/ipswich-town-promosi-ke-epl-bisakah-elkan-baggott-main-di-premier-league/" class="link-news">Read More</a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news2.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> Kerja Keras Marteen Paes Demi Membela Timnas Indonesia
+            </strong> </h2>
+            <h3>Kerja Keras Marteen Paes Demi Membela Timnas Indonesia.
+            </h3>
+            <a
+            href="https://startingeleven.id/kerja-keras-marteen-paes-demi-membela-timnas-indonesia/"
+            class="link-news"
+            >Read More</a
+          >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news3.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> “Geng Korea” Shin Tae-yong Dibalik Suksesnya Timnas Indonesia
+            </strong> </h2>
+            <h3> Dibalik kesuksesan Shin Tae-yong di timnas indonesia, terdapat
+              peran "Geng Korea"yang membantunya.
+              Siapa aja sih "Geng Korea" tersebut?</h3>
+              <a
+              href="https://startingeleven.id/geng-korea-shin-tae-yong-dibalik-suksesnya-timnas-indonesia/"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news4.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong>Mengapa Banyak Pemain Belanda Berasal dari Maluku?
+            </strong> </h2>
+            <h3>  Mengapa Banyak Pemain Belanda Berasal dari Maluku?</h3>
+            <a
+            href="https://startingeleven.id/mengapa-banyak-pemain-belanda-berasal-dari-maluku/"
+            class="link-news"
+            >Read More</a
+          >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news5.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> Dari cuma fans hingga disepelekan, joselu jadi pahlawan real madrid
+            </strong> </h2>
+            <h3>Siapa sangka Joselu yang awalnya hanya bisa menonton tim nya main
+              sekarang turut membawa timnya ke final!
+            </h3>
+              <a
+              href="https://startingeleven.id/dari-cuma-fans-hingga-disepelekan-joselu-jadi-pahlawan-real-madrid/"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news6.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> Berbekal banyak taktik semua laga, ini rahasia Xabi Alonso
+              juara Bundesliga!
+            </strong> </h2>
+            <h3> 
+              Ini pemain kunci yang mengantar Xabi Alonso membawa leverkusen juara
+            </h3>
+              <a
+              href="https://startingeleven.id/6-pemain-kunci-bayer-leverkusen-juarai-bundesliga-2023-24/"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news7.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> Kehancuran Ekonomi Tak Bisa Hentikan Leicester City Pulang ke Liga Inggris
+            </strong> </h2>
+            <h3> Jamie Vardy dan kawan kawan berhasil merangkak kembali ke Premiere League!
+            </h3>
+              <a
+              href="https://startingeleven.id/kehancuran-ekonomi-tak-bisa-hentikan-leicester-city-pulang-ke-liga-inggris/"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news8.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> Kalahkan Tim Kaya yang Sombong, Dortmund ke Final UCL Setelah 11 Tahun!
+            </strong> </h2>
+            <h3> Dortmund bungkam kesombongan fans PSG!</h3>
+              <a
+              href="https://startingeleven.id/kalahkan-tim-kaya-yang-sombong-dortmund-ke-final-ucl-setelah-11-tahun/"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news9.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> Musim Paling Sial Liverpool di Liga Inggris
+            </strong> </h2>
+            <h3> Karna sebuah insiden bisa berdampak besar!</h3>
+              <a
+              href="https://startingeleven.id/musim-paling-sial-liverpool-di-liga-inggris/"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="news10.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h2><strong> 
+              Carlo Ancelotti, Sang Penakluk Semifinal Liga Champions
+            </strong> </h2>
+            <h3> Semua tentang Don Carlo!</h3>
+              <a
+              href="https://startingeleven.id/carlo-ancelotti-sang-penakluk-semifinal-liga-champions/#google_vignette"
+              class="link-news"
+              >Read More</a
+            >
+          </div>
+        </div>
+      </div>
+      <!-- Tombol Sebelumnya pada Carousel -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <!-- Ikon panah "Previous" untuk tampilan visual -->
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <!-- Teks yang hanya terdengar (untuk aksesibilitas) menunjukkan "Previous" -->
+        <span class="visually-hidden">Previous</span>
+      </button>
+
+      <!-- Tombol Selanjutnya pada Carousel -->
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <!-- Ikon panah "Next" untuk tampilan visual -->
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <!-- Teks yang hanya terdengar (untuk aksesibilitas) menunjukkan "Next" -->
+        <span class="visually-hidden">Next</span>
+      </button>
+
+    </div>
+    <div class="main-about" id="about">
+      <div class="main-content">
+        <h1>About Website</h1>
+        <p>
+          Hello football lovers, introduce us as the creators of the "Off The
+          Pitch" site. Previously, we are very grateful for your visit to our
+          site. Football not only displays interesting information, both from
+          inside and outside the field, Off The Pitch presents football news
+          with guaranteed quality, using language that is easy to understand
+          using structured wording and displays quality football news. We as
+          website creators still often see that a lot of football news in
+          website format still displays overall information that sometimes does
+          not match the facts and even uses vocabulary that is not pleasing to
+          the ear. Thus, Off The Pitch was created.
+        </p>
+        <p>
+          The quality of football news influences the interest of football fans
+          to love football itself even more. Let's create an atmosphere of
+          interesting, neutral and mature information and let's continue to
+          enliven the world of football. ThankYou.
+        </p>
+        <p>Creator of "Off The Pitch", Gabriel Silitonga and Fathan Hanan</p>
+        <button id="aboutUsBtn">Want to Know About Us?</button>
+      </div>
+    </div>
+    <div class="main-developer" id="aboutDeveloper">
+      <div class="dev-main">
+        <div class="profile-cards">
+          <div class="card profile-card">
+            <div class="background-block">
+              <img src="pf1.jpg" alt="profile-sample1" class="background" />
+            </div>
+            <div class="profile-thumb-block">
+              <img src="gab.png" alt="profile-image" class="profile" />
+            </div>
+            <div class="card-content">
+              <h2>Gabriel Silitonga<small>BM 4A</small><small>2203421005</small><small>Leader</small></h2>
+              <div class="icon-block">
+                <a href="https://www.x.com/"><img src="twitter.svg" alt="Twitter"></a>
+                <a href="https://www.instagram.com/"><img src="instagram.svg" alt="Instagram"></a>
+                <a href="https://www.linkedin.com/"><img src="linkedin.svg" alt="LinkedIn"></a>
+            </div>
+            </div>
+          </div>
+          <div class="card profile-card">
+            <div class="background-block">
+              <img src="pf2.jpg" alt="profile-sample1" class="background" />
+            </div>
+            <div class="profile-thumb-block">
+              <img src="fth.jpeg" alt="profile-image" class="profile" />
+            </div>
+            <div class="card-content">
+              <h2>Fathan Hanan<small>BM 4A</small><small>2203421029</small><small>Vice Leader</small></h2>
+              <div class="icon-block">
+                <a href="https://www.x.com/"><img src="twitter.svg" alt="Twitter"></a>
+                <a href="https://www.instagram.com/"><img src="instagram.svg" alt="Instagram"></a>
+                <a href="https://www.linkedin.com/"><img src="linkedin.svg" alt="LinkedIn"></a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div
+        class="footer-content"
+        style="
+          background-color: #003366;
+          color: white;
+          text-align: center;
+          padding: 20px;
+        ">
+        <p>&copy; Off The Pitch 2024</p>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+  </body>
+  <script>
+    // Menunggu dokumen HTML selesai dimuat sebelum menjalankan script
+    document.addEventListener("DOMContentLoaded", function () {
+    // Mendapatkan elemen-elemen yang diperlukan
+    const menuToggle = document.querySelector(".menu-toggle");
+    const sideBar = document.querySelector(".side-bar");
+    const closeBtn = document.querySelector(".close-sidebar-btn");
+    const aboutUsBtn = document.getElementById("aboutUsBtn");
+    
+
+    // Mengaktifkan sidebar saat halaman beranda dibuka
+    if (window.location.pathname === "/") {
+        sideBar.classList.add("active");
+    }
+
+    // Menambahkan event listener untuk toggle sidebar
+    menuToggle.addEventListener("click", function () {
+        sideBar.classList.toggle("active");
+
+        // Mengatur opacity garis toggle menu saat sidebar aktif/non-aktif
+        if (sideBar.classList.contains("active")) {
+            menuToggle.querySelectorAll(".line").forEach(line => {
+                line.style.opacity = 0;
+            });
+        } else {
+            menuToggle.querySelectorAll(".line").forEach(line => {
+                line.style.opacity = 1;
+            });
+        }
+    });
+
+    // Menambahkan event listener untuk menutup sidebar
+    closeBtn.addEventListener("click", function () {
+        sideBar.classList.remove("active");
+        menuToggle.querySelectorAll(".line").forEach(line => {
+            line.style.opacity = 1;
+        });
+    });
+
+    // Menambahkan event listener untuk navigasi ke bagian "About Developer"
+    aboutUsBtn.addEventListener("click", function () {
+        window.location.href = "#aboutDeveloper";
+    });
+
+    // Menambahkan event listener untuk menyembunyikan sidebar saat digulir halaman
+    window.addEventListener("scroll", function () {
+        sideBar.classList.remove("active");
+        menuToggle.querySelectorAll(".line").forEach(line => {
+            line.style.opacity = 1;
+        });
+      });
+    });
+  </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const links = document.querySelectorAll(".link-news");
+
+    links.forEach(link => {
+      link.addEventListener("mouseenter", function() {
+        this.style.transform = "scale(1.05)"; /* Efek scaling saat kursor didekatkan */
+        this.style.transition = "transform 0.3s ease";
+      });
+
+      link.addEventListener("mouseleave", function() {
+        this.style.transform = "scale(1)"; /* Kembalikan ke ukuran semula saat kursor keluar */
+      });
+    });
+  });
+</script>
+
+  <!-- Skrip Bootstrap Bundle (Bootstrap JS) -->
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"
+></script>
+
+<!-- Skrip jQuery Slim -->
+<script
+  src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+  integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+  crossorigin="anonymous"
+></script>
+</html>
